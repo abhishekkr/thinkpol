@@ -50,17 +50,23 @@ func ginHandleErrors(ctx *gin.Context) {
 	}
 }
 
-func ginUpFaas(router *gin.Engine, newspeak *faasBackend.NewSpeak) {
-	router.GET("/faas", newspeak.FunctionStatus)
-	router.POST("/faas", newspeak.NewFunction)
-	router.DELETE("/faas", newspeak.DeleteFunction)
+/*
+ginUpFaas to manage FaaS routes
+*/
+func ginUpFaas(router *gin.Engine, thoughtcrime *faasBackend.ThoughtCrime) {
+	faasAPI := router.Group("/faas")
+	{
+		faasAPI.GET("/:backend/:procId", thoughtcrime.FunctionStatus)
+		faasAPI.POST("/:backend", thoughtcrime.NewFunction)
+		faasAPI.DELETE("/:backend/:procId", thoughtcrime.KillFunction)
+	}
 }
 
 /*
 ginUp maps all routing logic and starts server.
 */
 func ginUp(listenAt string) {
-	newspeak := faasBackend.InitNewSpeak(FaasType)
+	thoughtcrime := faasBackend.InitThoughtCrime(FaasType)
 
 	router := gin.Default()
 	router.Use(ginCors())
@@ -70,7 +76,7 @@ func ginUp(listenAt string) {
 	router.GET("/help", faasBackend.FaasHelp)
 	router.GET("/ping", faasBackend.FaasPing)
 
-	ginUpFaas(router, newspeak)
+	ginUpFaas(router, thoughtcrime)
 
 	router.Run(listenAt)
 }
