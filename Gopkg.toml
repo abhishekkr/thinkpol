@@ -26,12 +26,12 @@
 
 
 [[constraint]]
-  name = "github.com/abhishekkr/dory"
-  version = "1.2.1"
+  branch = "master"
+  name = "github.com/abhishekkr/gol"
 
 [[constraint]]
   branch = "master"
-  name = "github.com/abhishekkr/gol"
+  name = "github.com/abhishekkr/joycamp"
 
 [[constraint]]
   name = "github.com/gin-gonic/gin"
@@ -40,7 +40,3 @@
 [prune]
   go-tests = true
   unused-packages = true
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/abhishekkr/joycamp"
