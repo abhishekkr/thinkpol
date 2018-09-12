@@ -1,13 +1,9 @@
 package faasBackend
 
-import (
-	joycampProc "github.com/abhishekkr/joycamp/proc"
-)
-
 type CrimeThinker interface {
-	NewFunction(jproc joycampProc.Proc) error
-	FunctionStatus(procId uint64) error
-	KillFunction(procId uint64) error
+	NewFunction(jprocDef []byte) (string, error)
+	FunctionStatus(procId string) error
+	KillFunction(procId string) error
 }
 
 /*
@@ -15,7 +11,9 @@ FaasEngines acts as map for all available FaaS Backends.
 */
 var FaasEngines = make(map[string]CrimeThinker)
 
-/**/
+/*
+faasBackend to return CrimeThinker of correct backend type.
+*/
 func faasBackend(backend string) CrimeThinker {
 	if backend == "" {
 		backend = "local"

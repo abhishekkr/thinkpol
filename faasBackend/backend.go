@@ -1,13 +1,11 @@
 package faasBackend
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/abhishekkr/gol/golenv"
 	gollog "github.com/abhishekkr/gol/gollog"
-	joycampProc "github.com/abhishekkr/joycamp/proc"
 	gin "github.com/gin-gonic/gin"
 )
 
@@ -49,29 +47,25 @@ func (thoughtcrime *ThoughtCrime) FunctionStatus(ctx *gin.Context) {
 		"http-method": "get",
 	}
 
-	backend := ctx.Param("backend")
-
 	ctx.Writer.WriteHeader(http.StatusOK)
 	ctx.Writer.Header().Add("Content-Type", "application/json")
 	ctx.JSON(200, response)
 }
 
 func (thoughtcrime *ThoughtCrime) NewFunction(ctx *gin.Context) {
-	joycampCfg, err = ioutil.ReadAll(ctx.Request.Body)
+	jprocDef, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
-		gollog.Err(err)
+		gollog.Err(err.Error())
 	}
+	procId, err := faasBackend(ctx.Param("backend")).NewFunction(jprocDef)
 
-	var jproc joycampProc.Proc
-	err = json.Unmarshal(joycampCfg, &jproc)
 	if err != nil {
-		gollog.Err(err)
+		gollog.Err(err.Error())
 	}
-	faasBackend(ctx.Param("backend")).NewFunction(jproc)
-
 	response := map[string]string{
 		"http-method": "post",
-		"cfg":         joycampCfg,
+		"procId":      procId,
+		"err":         "what",
 	}
 
 	ctx.Writer.WriteHeader(http.StatusOK)
